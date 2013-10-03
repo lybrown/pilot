@@ -1,6 +1,10 @@
     icl 'hardware.asm'
     icl 'sysfull.asm'
     org $600
+    ; disable BASIC
+    lda PORTB
+    ora #2
+    sta PORTB
     ; http://www.atariarchives.org/c2bag/page211.php
     ; RAMTOP=$9E
     mva #$9E RAMTOP
