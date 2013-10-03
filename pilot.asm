@@ -24,6 +24,7 @@ dev
     dta c'S:',0
     ini $600
     org $A000
+    ; http://atariage.com/forums/topic/217239-looking-for-an-xex-version-of-atari-pilot-language-for-xl/
     ins 'pilot.bin'
     org $600
     ; http://wiki.strotmann.de/wiki/Wiki.jsp?page=Cartridges
