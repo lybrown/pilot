@@ -1,8 +1,12 @@
     icl 'hardware.asm'
     icl 'sysfull.asm'
     org $600
+    ; http://www.atariarchives.org/c2bag/page211.php
+    ; RAMTOP=$9E
     mva #$9E RAMTOP
     sta RAMSIZ
+    ; http://atariage.com/forums/topic/127483-atari-os-and-hardware-manuals-get-them-here/
+    ; GRAPHICS 0
     ldx #$60
     mwa #dev ICBAL,X
     mva #OPEN ICCOM,X
@@ -19,11 +23,13 @@ error
 dev
     dta c'S:',0
     ini $600
-    rts
     org $A000
     ins 'pilot.bin'
     org $600
+    ; http://wiki.strotmann.de/wiki/Wiki.jsp?page=Cartridges
+    ; CART INIT
     jsr init
+    ; CART RUN
     jmp ($BFFA)
 init
     jmp ($BFFE)
