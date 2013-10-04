@@ -11,13 +11,12 @@ error
 copy
     ; disable OS
     sei
-    mva #0 NMIEN
+    mvx #0 NMIEN
     lda PORTB
     and #$FE
     sta PORTB
     ; copy 8K
     ldy #$20
-    tax
 copy_src
     lda $FFFF,x
 copy_dst
