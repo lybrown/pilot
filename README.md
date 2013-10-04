@@ -1,7 +1,7 @@
 Atari Pilot
 ===========
 
-XEX executable based on PILOT cartridge
+PILOT cartridge converted to XEX executable
 
 References
 ----------
