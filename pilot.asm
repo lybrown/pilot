@@ -1,13 +1,44 @@
     icl 'hardware.asm'
     icl 'sysfull.asm'
     org $600
-    ; disable BASIC
+dev
+    dta c'S:',0
+error
+    sei
+    mva #0 NMIEN
+    mva #$30 COLBAK
+    jmp *
+copy
+    ; disable OS
+    sei
+    mva #0 NMIEN
     lda PORTB
-    ora #2
+    and #$FE
     sta PORTB
+    ; copy 8K
+    ldy #$20
+    tax
+copy_src
+    lda $FFFF,x
+copy_dst
+    sta $FFFF,x
+    inx
+    bne copy_src
+    inc copy_src+2
+    inc copy_dst+2
+    dey
+    bne copy_src
+    ; enable OS
+    lda PORTB
+    ora #1
+    sta PORTB
+    mva #$40 NMIEN
+    cli
+    rts
+reserve_ram
     ; http://www.atariarchives.org/c2bag/page211.php
-    ; RAMTOP=$9E
-    mva #$9E RAMTOP
+    ; RAMTOP=$A0
+    mva #$A0 RAMTOP
     sta RAMSIZ
     ; http://atariage.com/forums/topic/127483-atari-os-and-hardware-manuals-get-them-here/
     ; GRAPHICS 0
@@ -18,19 +49,29 @@
     mva #0 ICAX2,x
     jsr CIOV
     bmi error
+    ; Disable BASIC
+    lda PORTB
+    ora #2
+    sta PORTB
     rts
-error
-    sei
-    mva #0 NMIEN
-    mva #$30 COLBAK
-    jmp *
-dev
-    dta c'S:',0
-    ini $600
-    org $A000
-    ; http://atariage.com/forums/topic/217239-looking-for-an-xex-version-of-atari-pilot-language-for-xl/
-    ins 'pilot.bin'
-    org $600
+xexrun
+    ; copy to high ram
+    mwa #$A000 copy_src+1
+    mwa #$D800 copy_dst+1
+    jsr copy
+    ; trap RESET
+    ; http://www.atariarchives.org/dere/chapt08.php
+    mwa DOSINI reset+1
+    mwa #reset DOSINI
+    jmp main
+reset
+    jsr $FFFF
+    jsr reserve_ram
+    ; copy from high ram
+    mwa #$D800 copy_src+1
+    mwa #$A000 copy_dst+1
+    jsr copy
+main
     ; http://wiki.strotmann.de/wiki/Wiki.jsp?page=Cartridges
     ; CART INIT
     jsr init
@@ -38,4 +79,11 @@ dev
     jmp ($BFFA)
 init
     jmp ($BFFE)
-    run $600
+
+    ini reserve_ram
+
+    org $A000
+    ; http://atariage.com/forums/topic/217239-looking-for-an-xex-version-of-atari-pilot-language-for-xl/
+    ins 'pilot.bin'
+
+    run xexrun
