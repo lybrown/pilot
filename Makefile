@@ -5,6 +5,12 @@ all: pilot.xex
 	mkdir -p bin
 	cp $< bin/$<
 
+boot: disk
+	altirra pilot.atr
+disk: pilot.atr
+pilot.atr: all
+	dir2atr -b Dos25 pilot.atr bin
+
 out = > $@~ && mv $@~ $@
 
 atari = altirra

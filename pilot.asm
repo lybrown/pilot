@@ -60,16 +60,17 @@ xexrun
     jsr copy
     ; trap RESET
     ; http://www.atariarchives.org/dere/chapt08.php
-    mwa DOSINI reset+1
+    mwa DOSINI call_old_dosini+1
     mwa #reset DOSINI
-    jmp main
+    jmp call_old_dosini
 reset
-    jsr $FFFF
     jsr reserve_ram
     ; copy from high ram
     mwa #$D800 copy_src+1
     mwa #$A000 copy_dst+1
     jsr copy
+call_old_dosini
+    jsr $FFFF
 main
     ; http://wiki.strotmann.de/wiki/Wiki.jsp?page=Cartridges
     ; CART INIT
