@@ -3,7 +3,7 @@
 pilot.run: all
 all: pilot.xex pilot-nodos.xex
 	mkdir -p bin
-	cp $< bin/$<
+	cp $^ bin
 
 pilot.obx: DOS=1
 pilot-nodos.obx: DOS=0
